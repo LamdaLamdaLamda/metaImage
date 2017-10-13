@@ -45,6 +45,7 @@ class MetaImage(object):
             except IOError:
                 print("[-] Cant open Log file!")
                 sys.exit(1)
+            print("[+] wrote tags to %s" %(self.logFile))
 
             self.tags.close()
 
@@ -60,18 +61,16 @@ class MetaImage(object):
                 image = Image.open(self.options.output)
             except IOError:
                 print("[-] Cant Open Image")
+            print("[+] Image successfully opned")
             # getting the exif tags and printing these tags
             # with the corresponding values
             try:
                 for i,k in image._getexif().items():
                     if i in ExifTags.TAGS:
                         self.tags.append(ExifTags.TAGS[i] + ": " + str(k))
+                        print(self.tags[-1])
 
-                # printing tag list
-                for i in self.tags:
-                    print(i)
-
-            except AttributeError:
+            except AttributeError,IndexError:
                 print("[-] No Metadata found!")
                 print("[-] Exiting...")
                 sys.exit(1)
