@@ -16,10 +16,10 @@ class MetaImage(object):
         self.logFile = None
         self.tags = []
         # Adding Optionparser options
-        self.parser = argparse.ArgumentParser()
-        self.parser.add_argument('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
-        self.parser.add_argument('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
-        self.parser.add_argument('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
+        self.parser = argparse.ArgumentParser(description='With \'-s\' download a file and print the Metadata or use \'-p\' to print the Metadata of a local file')
+        self.parser.add_argument('-s', '--source', dest='source', help='Download URL[OPTIONAL]', metavar='SOURCE')
+        self.parser.add_argument('-o', '--output', dest='output', help='file output [REQUIRED with -s]', metavar='FILE')
+        self.parser.add_argument('-p', dest='printer', help='Prints metadata of local file [OPTIONAL]', metavar='FILE')
         self.parser.add_argument('-l', dest='logger', help='Logs the metadata [OPTIONAL]', metavar='LOGFILE')
         self.options = self.parser.parse_args()
 
@@ -32,7 +32,7 @@ class MetaImage(object):
             self.options.output = self.options.printer
             self.readMetaData()
         if self.options.printer and self.options.logger:
-            self.logFile =  open(self.options.logger, "w")
+            self.logFile = open(self.options.logger, "w")
             self.readMetaData()
             
             # insertion into file
@@ -55,14 +55,11 @@ class MetaImage(object):
             # getting the exif tags and printing these tags
             # with the corresponding values
             try:
-                for i,k in image._getexif().items():
+                for i, k in image._getexif().items():
                     if i in ExifTags.TAGS:
                         self.tags.append(ExifTags.TAGS[i] + ": " + str(k))
-
-                # printing tag list
-                for i in self.tags:
-                    print(i)
-
+                        # prints the last argument
+                        print(self.tags[-1])
             except AttributeError:
                 print("[-] No Metadata found!")
                 print("[-] Exiting...")
