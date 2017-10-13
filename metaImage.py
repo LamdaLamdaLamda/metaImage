@@ -4,8 +4,7 @@ import sys
 import os
 import urllib2
 import socket
-import logging
-from optparse import OptionParser
+import argparse
 
 class MetaImage(object):
 
@@ -17,12 +16,12 @@ class MetaImage(object):
         self.logFile = None
         self.tags = []
         # Adding Optionparser options
-        self.parser = OptionParser()
-        self.parser.add_option('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
-        self.parser.add_option('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
-        self.parser.add_option('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
-        self.parser.add_option('-l',dest='logger',help='Logs the metadata [OPTIONAL]',metavar='LOGFILE')
-        (self.options, self.args) = self.parser.parse_args()
+        self.parser = argparse.ArgumentParser()
+        self.parser.add_argument('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
+        self.parser.add_argument('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
+        self.parser.add_argument('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
+        self.parser.add_argument('-l', dest='logger', help='Logs the metadata [OPTIONAL]', metavar='LOGFILE')
+        self.options = self.parser.parse_args()
 
     def verfyOptionSource(self):
         # checking all option and excute the selection
