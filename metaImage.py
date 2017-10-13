@@ -4,8 +4,8 @@ import sys
 import os
 import urllib2
 import socket
+import logging
 from optparse import OptionParser
-
 
 class MetaImage(object):
 
@@ -14,11 +14,14 @@ class MetaImage(object):
         self.options = None
         self.args = None
         self.image = None
+        self.logFile = None
+        self.tags = []
         # Adding Optionparser options
         self.parser = OptionParser()
         self.parser.add_option('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
         self.parser.add_option('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
         self.parser.add_option('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
+        self.parser.add_option('-l',dest='logger',help='Logs the metadata [OPTIONAL]',metavar='LOGFILE')
         (self.options, self.args) = self.parser.parse_args()
 
     def verfyOptionSource(self):
@@ -29,6 +32,14 @@ class MetaImage(object):
         if self.options.printer and not self.options.source:
             self.options.output = self.options.printer
             self.readMetaData()
+        if self.options.printer and self.options.logger:
+            self.logFile =  open(self.options.logger, "w")
+            self.readMetaData()
+            
+            # insertion into file
+            for i in self.tags:
+                self.logFile.write(i + '\n')
+            self.tags.close()
 
     def readMetaData(self):
         # checking for image jpg/jpeg format
@@ -47,7 +58,12 @@ class MetaImage(object):
             try:
                 for i,k in image._getexif().items():
                     if i in ExifTags.TAGS:
-                        print(ExifTags.TAGS[i] + ": " + str(k))
+                        self.tags.append(ExifTags.TAGS[i] + ": " + str(k))
+
+                # printing tag list
+                for i in self.tags:
+                    print(i)
+
             except AttributeError:
                 print("[-] No Metadata found!")
                 print("[-] Exiting...")
