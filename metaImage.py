@@ -16,10 +16,10 @@ class MetaImage(object):
         self.logFile = None
         self.tags = []
         # Adding Optionparser options
-        self.parser = argparse.ArgumentParser(description='With \'-s\' download a file and print the Metadata or use \'-p\' to print the Metadata of a local file')
-        self.parser.add_argument('-s', '--source', dest='source', help='Download URL[OPTIONAL]', metavar='SOURCE')
-        self.parser.add_argument('-o', '--output', dest='output', help='file output [REQUIRED with -s]', metavar='FILE')
-        self.parser.add_argument('-p', dest='printer', help='Prints metadata of local file [OPTIONAL]', metavar='FILE')
+        self.parser = argparse.ArgumentParser()
+        self.parser.add_argument('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
+        self.parser.add_argument('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
+        self.parser.add_argument('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
         self.parser.add_argument('-l', dest='logger', help='Logs the metadata [OPTIONAL]', metavar='LOGFILE')
         self.options = self.parser.parse_args()
 
@@ -61,11 +61,14 @@ class MetaImage(object):
             # getting the exif tags and printing these tags
             # with the corresponding values
             try:
-                for i, k in image._getexif().items():
+                for i,k in image._getexif().items():
                     if i in ExifTags.TAGS:
                         self.tags.append(ExifTags.TAGS[i] + ": " + str(k))
-                        # prints the last argument
-                        print(self.tags[-1])
+
+                # printing tag list
+                for i in self.tags:
+                    print(i)
+
             except AttributeError:
                 print("[-] No Metadata found!")
                 print("[-] Exiting...")
@@ -91,7 +94,6 @@ class MetaImage(object):
         # writing data to local image file
         with open(self.options.output, 'wb') as outfile:
             outfile.write(imgdata)
-
 
 if __name__ == "__main__":
     os.system('clear')
