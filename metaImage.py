@@ -34,10 +34,17 @@ class MetaImage(object):
         if self.options.printer and self.options.logger:
             self.logFile = open(self.options.logger, "w")
             self.readMetaData()
-            
-            # insertion into file
-            for i in self.tags:
-                self.logFile.write(i + '\n')
+
+            # handling IOError when occur
+            try:
+                self.logFile =  open(self.options.logger, "w")
+                # insertion into file
+                for i in self.tags:
+                    self.logFile.write(i + '\n')
+            except IOError:
+                print("[-] Cant open Log file!")
+                sys.exit(1)
+
             self.tags.close()
 
     def readMetaData(self):
