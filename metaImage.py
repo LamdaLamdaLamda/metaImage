@@ -14,9 +14,11 @@ class MetaImage(object):
         self.args = None
         self.image = None
         self.logFile = None
+        # description string
+        self.desc = 'Gurkenfass'
         self.tags = []
         # Adding Optionparser options
-        self.parser = argparse.ArgumentParser()
+        self.parser = argparse.ArgumentParser(description=self.desc)
         self.parser.add_argument('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
         self.parser.add_argument('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
         self.parser.add_argument('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
