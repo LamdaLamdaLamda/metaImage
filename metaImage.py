@@ -6,6 +6,7 @@ import urllib2
 import socket
 from optparse import OptionParser
 
+
 class MetaImage(object):
 
     def __init__(self):
@@ -15,17 +16,16 @@ class MetaImage(object):
         self.image = None
         # Adding Optionparser options
         self.parser = OptionParser()
-        self.parser.add_option('-s','--source',dest='source',help='URL to the image [REQUIRED]',metavar='SOURCE')
-        self.parser.add_option('-o','--output',dest='output',help='file output .xif [OPTIONAL]',metavar='FILE')
-        self.parser.add_option('-p',dest='printer',help='Simply prints metadata [OPTIONAL]')
-        (self.options,self.args) = self.parser.parse_args()
-        print(self.options)
+        self.parser.add_option('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
+        self.parser.add_option('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
+        self.parser.add_option('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
+        (self.options, self.args) = self.parser.parse_args()
 
     def verfyOptionSource(self):
         # checking all option and excute the selection
         if self.options.printer is None and self.options.source is not None:
             self.downloadImage()
-            self.readMetaData
+            self.readMetaData()
         if self.options.printer is not None and self.options.source is None:
             self.options.output = self.options.printer
             self.readMetaData()
@@ -46,7 +46,7 @@ class MetaImage(object):
             try:
                 for i,k in image._getexif().items():
                     if i in ExifTags.TAGS:
-                        print(ExifTags.TAGS[i] + ": " +  str(k))
+                        print(ExifTags.TAGS[i] + ": " + str(k))
             except AttributeError:
                 print("[-] No Metadata found!")
                 print("[-] Exiting...")
@@ -56,7 +56,7 @@ class MetaImage(object):
         # set socket connection timeout
         socket.setdefaulttimeout(25)
 
-        #preparing url request. To make sure that the request is recognized
+        # preparing url request. To make sure that the request is recognized
         # as regular request, we need to ad a head (User-Agent etc.).
         req = urllib2.Request(self.options.source)
         req.add_header('User-Agent', 'Fake but made')
@@ -72,6 +72,7 @@ class MetaImage(object):
         # writing data to local image file
         with open(self.options.output, 'wb') as outfile:
             outfile.write(imgdata)
+
 
 if __name__ == "__main__":
     os.system('clear')
