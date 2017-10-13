@@ -13,6 +13,8 @@ class MetaImage(object):
         self.options = None
         self.args = None
         self.image = None
+        self.logFile = None
+        self.tags = []
         # Adding Optionparser options
         self.parser = argparse.ArgumentParser()
         self.parser.add_argument('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
@@ -29,6 +31,14 @@ class MetaImage(object):
         if self.options.printer and not self.options.source:
             self.options.output = self.options.printer
             self.readMetaData()
+        if self.options.printer and self.options.logger:
+            self.logFile =  open(self.options.logger, "w")
+            self.readMetaData()
+            
+            # insertion into file
+            for i in self.tags:
+                self.logFile.write(i + '\n')
+            self.tags.close()
 
     def readMetaData(self):
         # checking for image jpg/jpeg format
@@ -47,7 +57,12 @@ class MetaImage(object):
             try:
                 for i,k in image._getexif().items():
                     if i in ExifTags.TAGS:
-                        print(ExifTags.TAGS[i] + ": " + str(k))
+                        self.tags.append(ExifTags.TAGS[i] + ": " + str(k))
+
+                # printing tag list
+                for i in self.tags:
+                    print(i)
+
             except AttributeError:
                 print("[-] No Metadata found!")
                 print("[-] Exiting...")
