@@ -6,7 +6,6 @@ import urllib2
 import socket
 import argparse
 
-
 class MetaImage(object):
 
     def __init__(self):
@@ -33,7 +32,6 @@ class MetaImage(object):
             self.options.output = self.options.printer
             self.readMetaData()
         if self.options.printer and self.options.logger:
-            self.logFile = open(self.options.logger, "w")
             self.readMetaData()
 
             # handling IOError when occur
