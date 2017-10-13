@@ -23,16 +23,17 @@ class MetaImage(object):
 
     def verfyOptionSource(self):
         # checking all option and excute the selection
-        if self.options.printer is None and self.options.source is not None:
+        if not self.options.printer and self.options.source:
             self.downloadImage()
             self.readMetaData()
-        if self.options.printer is not None and self.options.source is None:
+        if self.options.printer and not self.options.source:
             self.options.output = self.options.printer
             self.readMetaData()
 
     def readMetaData(self):
         # checking for image jpg/jpeg format
-        if (".jpg" not in self.options.output) and (".jpeg" not in self.options.output):
+        if (".jpg" or ".jpeg") not in self.options.output:
+            print("Wrong output file format")
             exit(1)
         else:
             # opening the image -> Raise exception if it fails
