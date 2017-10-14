@@ -2,9 +2,15 @@ from PIL import Image
 from PIL import ExifTags
 import sys
 import os
-import urllib2
 import socket
 import argparse
+
+# checking the python versio for a correct import
+# keep in mind (as far as I know): in Python 3 urllib2 as merged as urllib.
+if sys.version_info[0] < 3:
+    import urllib2
+else:
+    import urllib
 
 class MetaImage(object):
 
@@ -69,9 +75,12 @@ class MetaImage(object):
                     if i in ExifTags.TAGS:
                         self.tags.append(ExifTags.TAGS[i] + ": " + str(k))
                         print(self.tags[-1])
-
-            except AttributeError,IndexError:
+            except AttributeError:
                 print("[-] No Metadata found!")
+                print("[-] Exiting...")
+                sys.exit(1)
+            except IndexError:
+                print("[-] Index out of bound!")
                 print("[-] Exiting...")
                 sys.exit(1)
 
