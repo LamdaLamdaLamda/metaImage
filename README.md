@@ -27,4 +27,9 @@ Metadata basically constsis of the following informations:
 ## **Package Requirements**
 The following packages are necessary to excecute the **metaImage.py**.
   * PIL - Pillow -> **pip install Pillow**
-  
+  * Argument Parser - argparse -> **pip install argparse**
+Depending on what python version you use you have to import a different **urllib** version.
+This is why I inserted a dependent import strucutre at the beginning of the script.
+In general you can install urllib2 if you use **python2.X** otherwise I recomment **urllib3** which
+is acctually merged into **urllib**. As far as I know.
+  * URL Libarry -> **pip install urllib**
