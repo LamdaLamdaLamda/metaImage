@@ -36,3 +36,15 @@ In general you can install urllib2 if you use **python2.X** otherwise I recommen
 is acctually merged into **urllib**. As far as I know.
 
   * URL Libarry -> **pip install urllib**
+
+## **Setup**
+To add **metaImage.py** to your interpeter path you can execute the **setup.sh**
+as follows:
+  * **sudo bash setup.sh metaImage.sh**
+
+In your case it might be not neccessary to run it with **sudo**. It depends on your
+privileges.
+The Script just simply copies the tool to /bin/ and marks it as executable.
+
+After the script finished successfully you can run the tool with:
+  * **metaImage [OPTIONS] [IMAGE]**

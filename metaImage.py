@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from PIL import Image
 from PIL import ExifTags
 import sys
