@@ -21,14 +21,16 @@ class MetaImage(object):
         self.image = None
         self.logFile = None
         # description string
-        self.desc = 'Gurkenfass'
+        self.desc = """ MetaImage provides the functionality to read and write metadata
+            on Images in JPEG/JPG format."""
         self.tags = []
         # Adding Optionparser options
         self.parser = argparse.ArgumentParser(description=self.desc)
-        self.parser.add_argument('-s', '--source', dest='source', help='URL to the image [REQUIRED]', metavar='SOURCE')
+        self.parser.add_argument('-s', '--source', dest='source', help='URL to the image.', metavar='SOURCE')
         self.parser.add_argument('-o', '--output', dest='output', help='file output [REQUIRED IF -s SET]', metavar='FILE')
-        self.parser.add_argument('-p', dest='printer', help='Simply prints metadata [OPTIONAL]')
-        self.parser.add_argument('-l', dest='logger', help='Logs the metadata [OPTIONAL]', metavar='LOGFILE')
+        self.parser.add_argument('-p', dest='printer', help='Simply prints metadata.', metavar='IMAGE')
+        self.parser.add_argument('-l', dest='logger', help='Logs the metadata.', metavar='LOGFILE')
+        self.parser.add_argument('-d','--delete', dest='remove', help='Removing metadata on image.', metavar='IMAGE')
         self.options = self.parser.parse_args()
 
     def verfyOptionSource(self):
@@ -36,12 +38,14 @@ class MetaImage(object):
         if not self.options.printer and self.options.source:
             self.downloadImage()
             self.readMetaData()
-        if self.options.printer and not self.options.source:
+        elif self.options.printer and not self.options.source:
             self.options.output = self.options.printer
             self.readMetaData()
-        if self.options.printer and self.options.logger:
+        elif self.options.remove:
+            self.options.output = self.options.remove
+            self.removeEXIF()
+        elif self.options.printer and self.options.logger:
             self.readMetaData()
-
             # handling IOError when occur
             try:
                 self.logFile =  open(self.options.logger, "w")
@@ -54,6 +58,19 @@ class MetaImage(object):
             print("[+] wrote tags to %s" %(self.logFile))
 
             self.tags.close()
+        else:
+            self.parser.print_help()
+
+    def openImage(self):
+        # opening the image -> Raise exception if it fails
+        print("[*] Opening Image...")
+        try:
+            image = Image.open(self.options.output)
+        except IOError:
+            print("[-] Cant Open Image")
+            sys.exit(1)
+        print("[+] Image successfully opned")
+        return image
 
     def readMetaData(self):
         # checking for image jpg/jpeg format
@@ -61,13 +78,8 @@ class MetaImage(object):
             print("Wrong output file format")
             exit(1)
         else:
-            # opening the image -> Raise exception if it fails
-            print("[*] Opening Image...")
-            try:
-                image = Image.open(self.options.output)
-            except IOError:
-                print("[-] Cant Open Image")
-            print("[+] Image successfully opned")
+            image = self.openImage()
+
             # getting the exif tags and printing these tags
             # with the corresponding values
             try:
@@ -104,6 +116,17 @@ class MetaImage(object):
         # writing data to local image file
         with open(self.options.output, 'wb') as outfile:
             outfile.write(imgdata)
+
+    def removeEXIF(self):
+        image = self.openImage()
+        # content of the exif-tags -> NOTHING ;)
+        emptyExif= ""
+        print("[*] Removing EXIF-tags")
+        try:
+            image.save(self.options.remove,emptyExif)
+        except IOError:
+            print("[-] Failed removing EXIF-tags!")
+            sys.exit(1)
 
 if __name__ == "__main__":
     os.system('clear')
